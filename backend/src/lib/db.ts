@@ -1,12 +1,10 @@
-import { EnvConfiguration } from "../config/envConfig";
 import mongoose from "mongoose";
-
-const mongoUri = EnvConfiguration().mongoUri as string;
+import { MONGO_URI } from "../config/envConfig";
 
 //IIFE to connect to MongoDB
 export default (async () => {
   try {
-    await mongoose.connect(mongoUri);
+    await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB");
   } catch (error) {
     console.log("Error connecting to MongoDB: ", error);

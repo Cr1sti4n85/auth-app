@@ -1,10 +1,14 @@
-import { config } from "dotenv";
+const getEnv = (key: string, defaultValue?: string): string => {
+  const value = process.env[key] || defaultValue;
 
-config();
+  if (value === undefined) {
+    throw Error(`Missing String environment variable for ${key}`);
+  }
 
-const { PORT: port = 4000, MONGO_URI: mongoUri } = process.env;
+  return value;
+};
 
-export const EnvConfiguration = () => ({
-  port,
-  mongoUri,
-});
+export const NODE_ENV = getEnv("NODE_ENV", "development");
+export const PORT = getEnv("PORT", "4000");
+export const MONGO_URI = getEnv("MONGO_URI");
+export const APP_ORIGIN = getEnv("APP_ORIGIN");

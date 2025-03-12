@@ -1,10 +1,11 @@
 import express, { Application } from "express";
-import { EnvConfiguration } from "./config/envConfig";
+import "dotenv/config";
 import "./lib/db";
+import { PORT } from "./config/envConfig";
 
 const app: Application = express();
 
-const port = EnvConfiguration().port;
+const port = PORT;
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
