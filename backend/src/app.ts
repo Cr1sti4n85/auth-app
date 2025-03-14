@@ -5,6 +5,7 @@ import "./lib/db";
 import { PORT, APP_ORIGIN } from "./config/envConfig";
 import cookieParser from "cookie-parser";
 import errorHandler from "./middleware/errorHandler";
+import authRouter from "./routes/auth.route";
 
 const app: Application = express();
 
@@ -18,6 +19,9 @@ app.use(
 );
 
 app.use(cookieParser());
+
+app.use("/auth", authRouter);
+
 app.use(errorHandler);
 
 const port = PORT;
