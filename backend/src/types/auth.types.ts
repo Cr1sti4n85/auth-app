@@ -12,8 +12,8 @@ export interface User extends Document {
   comparePassword(val: string): Promise<boolean>;
 }
 
-export interface IUserRepository extends Repository<User> {}
+export interface IAuthRepository extends Repository<User> {}
 
-export interface IUserService {
+export interface IAuthService {
   createUser(data: Partial<User>): Promise<User>;
 }
