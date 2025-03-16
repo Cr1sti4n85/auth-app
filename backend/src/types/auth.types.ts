@@ -1,5 +1,5 @@
 import { Document } from "mongoose";
-import { Repository } from "./repository.types";
+import { Query, Repository } from "./repository.types";
 
 export interface User extends Document {
   //   _id: mongoose.Types.ObjectId;
@@ -16,4 +16,5 @@ export interface IAuthRepository extends Repository<User> {}
 
 export interface IAuthService {
   createUser(data: Partial<User>): Promise<User>;
+  existUser(query: Query): Promise<{} | null>;
 }
