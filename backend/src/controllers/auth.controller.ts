@@ -18,12 +18,14 @@ export const registerHandler = asyncHandler(
 
     const { email } = req.body;
 
+    //verify existing user
     const existingUser = await authService.existUser({ email });
 
     if (existingUser) {
       throw new Error("User already exists.");
     }
 
+    //create user
     const newUser = await authService.createUser({
       email: request.email,
       password: request.password,
