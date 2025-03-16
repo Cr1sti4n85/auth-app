@@ -1,13 +1,13 @@
-import { Document, Types } from "mongoose";
+import mongoose, { Document, Types } from "mongoose";
 import { Query, Repository } from "./repository.types";
 
-const enum VerificationCodeType {
+export const enum VerificationCodeType {
   EmailVerification = "email_verification",
   PasswordReset = "password_reset",
 }
 
 export interface Verification extends Document {
-  userId: Types.ObjectId;
+  userId: Partial<Types.ObjectId>;
   type: VerificationCodeType;
   expiresAt: Date;
   createdAt: Date;

@@ -4,8 +4,8 @@ import { Query } from "../types/repository.types";
 
 export class AuthRepository implements IAuthRepository {
   async create(data: User): Promise<User> {
-    const newUser = new UserModel(data);
-    return await newUser.save();
+    const newUser = await UserModel.create(data);
+    return newUser;
   }
 
   async exists(data: Query): Promise<{} | null> {
