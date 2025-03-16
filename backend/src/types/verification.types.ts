@@ -13,7 +13,7 @@ export interface Verification extends Document {
   createdAt: Date;
 }
 
-export interface IVerificaationRepository extends Repository<Verification> {}
+export interface IVerificationRepository extends Repository<Verification> {}
 
 export interface IVerificationService {
   createVerificationCode(data: Partial<Verification>): Promise<Verification>;

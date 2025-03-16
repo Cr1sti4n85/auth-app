@@ -1,11 +1,11 @@
 import VerificationCodeModel from "../models/verificationCode.model";
 import {
-  IVerificaationRepository,
+  IVerificationRepository,
   Verification,
 } from "../types/verification.types";
 import { Query } from "../types/repository.types";
 
-export class VerificationRepository implements IVerificaationRepository {
+export class VerificationRepository implements IVerificationRepository {
   async create(data: Partial<Verification>): Promise<Verification> {
     const newVerificationCode = new VerificationCodeModel(data);
     return await newVerificationCode.save();
