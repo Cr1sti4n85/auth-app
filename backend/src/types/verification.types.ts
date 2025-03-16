@@ -13,9 +13,9 @@ export interface Verification extends Document {
   createdAt: Date;
 }
 
-export interface IAuthRepository extends Repository<Verification> {}
+export interface IVerificaationRepository extends Repository<Verification> {}
 
-export interface IAuthService {
-  createUser(data: Partial<Verification>): Promise<Verification>;
-  existUser(query: Query): Promise<{} | null>;
+export interface IVerificationService {
+  createVerificationCode(data: Partial<Verification>): Promise<Verification>;
+  existVerificationCode(query: Query): Promise<{} | null>;
 }
