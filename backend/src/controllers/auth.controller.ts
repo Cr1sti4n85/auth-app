@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import asyncHandler from "../lib/asyncHandler";
 import { registerSchema } from "../schemas/register.schema";
 import { IAuthRepository, IAuthService } from "../types/auth.types";
@@ -11,8 +12,12 @@ import {
 } from "../types/verification.types";
 import { VerificationRepository } from "../repositories/verification.repository";
 import { VerificationService } from "../services/verification.service";
-import mongoose from "mongoose";
 import { oneYearFromNow } from "../lib/date";
+import { ISessionRepository, ISessionService } from "../types/session.types";
+import { SessionRepository } from "../repositories/session.repository";
+import { SessionService } from "../services/session.service";
+import { JWT_REFRESH_SECRET, JWT_SECRET } from "../config/envConfig";
+import { CREATED } from "../config/statusCodes";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -22,6 +27,9 @@ const verificationRepository: IVerificationRepository =
 const verificationService: IVerificationService = new VerificationService(
   verificationRepository
 );
+
+const sessionRepository: ISessionRepository = new SessionRepository();
+const sessionService: ISessionService = new SessionService(sessionRepository);
 
 export const registerHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
@@ -55,12 +63,32 @@ export const registerHandler = asyncHandler(
           expiresAt: oneYearFromNow(),
         }
       );
+      //TODO: send verification email
+
+      //create session
+      const session = await sessionService.createSession({
+        userId: newUser._id,
+        userAgent: request.userAgent,
+      });
+      //sign access/refresh token
+      const refreshToken = jwt.sign(
+        {
+          sessionId: session._id,
+        },
+        JWT_REFRESH_SECRET,
+        { expiresIn: "15d", audience: ["user"] }
+      );
+
+      const accessToken = jwt.sign(
+        { userId: newUser._id, sessionId: session._id },
+        JWT_SECRET,
+        {
+          expiresIn: "15m",
+          audience: ["user"],
+        }
+      );
+
+      res.status(CREATED).json(newUser);
     }
-
-    //TODO: send verification email
-
-    //create session
-
-    //sign access/refresh token
   }
 );

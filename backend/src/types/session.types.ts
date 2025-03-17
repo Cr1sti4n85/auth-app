@@ -2,7 +2,7 @@ import { Document, Types } from "mongoose";
 import { Query, Repository } from "./repository.types";
 
 export interface Session extends Document {
-  userId: Types.ObjectId;
+  userId: Partial<Types.ObjectId>;
   userAgent?: string;
   expiresAt: Date;
   createdAt: Date;
