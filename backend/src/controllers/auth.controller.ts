@@ -12,6 +12,7 @@ import {
 import { VerificationRepository } from "../repositories/verification.repository";
 import { VerificationService } from "../services/verification.service";
 import mongoose from "mongoose";
+import { oneYearFromNow } from "../lib/date";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -51,10 +52,15 @@ export const registerHandler = asyncHandler(
         {
           userId: newUser._id,
           type: VerificationCodeType.EmailVerification,
-          expiresAt: new Date(),
-          createdAt: new Date(),
+          expiresAt: oneYearFromNow(),
         }
       );
     }
+
+    //TODO: send verification email
+
+    //create session
+
+    //sign access/refresh token
   }
 );
