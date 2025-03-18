@@ -18,6 +18,7 @@ import { SessionService } from "../services/session.service";
 import { CREATED } from "../config/statusCodes";
 import { createRefresh } from "../lib/refreshToken";
 import { createAccess } from "../lib/accessToken";
+import { setAuthCookies } from "../lib/setCookies";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -75,7 +76,10 @@ export const registerHandler = asyncHandler(
 
       const accessToken = createAccess(newUser, session);
 
-      res.status(CREATED).json(newUser);
+      //setAuthCookies returns the response
+      return setAuthCookies({ res, accessToken, refreshToken })
+        .status(CREATED)
+        .json(newUser);
     }
   }
 );

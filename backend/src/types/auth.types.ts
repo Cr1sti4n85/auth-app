@@ -1,5 +1,6 @@
 import { Document } from "mongoose";
 import { Query, Repository } from "./repository.types";
+import { Response } from "express";
 
 export interface User extends Document {
   //   _id: mongoose.Types.ObjectId;
@@ -11,6 +12,13 @@ export interface User extends Document {
   userAgent?: string;
   comparePassword(val: string): Promise<boolean>;
 }
+
+//Auth Cookies
+export type AuthCookieParams = {
+  res: Response;
+  accessToken: string;
+  refreshToken: string;
+};
 
 export interface IAuthRepository extends Repository<User> {}
 
