@@ -15,10 +15,11 @@ import { oneYearFromNow } from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
-import { CREATED } from "../config/statusCodes";
+import { CONFLICT, CREATED } from "../config/statusCodes";
 import { createRefresh } from "../lib/refreshToken";
 import { createAccess } from "../lib/accessToken";
 import { setAuthCookies } from "../lib/setCookies";
+import appAssert from "../lib/appAssert";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -45,9 +46,10 @@ export const registerHandler = asyncHandler(
     //verify existing user
     const existingUser = await authService.existUser({ email });
 
-    if (existingUser) {
-      throw new Error("User already exists.");
-    }
+    // if (existingUser) {
+    //   throw new Error("User already exists.");
+    // }
+    appAssert(!existingUser, CONFLICT, "User already exists");
 
     //create user
     const newUser = await authService.createUser({

@@ -5,5 +5,5 @@ export type AppAssert = (
   condition: any,
   httpStatusCode: HttpStatusCodes,
   message: string,
-  appErrorCode: AppErrorCode
+  appErrorCode?: AppErrorCode
 ) => asserts condition;
