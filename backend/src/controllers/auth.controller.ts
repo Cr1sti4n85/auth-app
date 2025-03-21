@@ -15,7 +15,7 @@ import { oneYearFromNow } from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
-import { CONFLICT, CREATED, UNAUTHORIZED } from "../config/statusCodes";
+import { CONFLICT, CREATED, OK, UNAUTHORIZED } from "../config/statusCodes";
 import { createRefresh } from "../lib/refreshToken";
 import { createAccess } from "../lib/accessToken";
 import { setAuthCookies } from "../lib/setCookies";
@@ -102,10 +102,25 @@ export const loginHandler = asyncHandler(
       request.password
     );
     appAssert(isValidPassword, UNAUTHORIZED, "Invalid email or password");
-    //create session
 
-    //sign access token and refresh token
+    if (user && user._id) {
+      //create session
+      const session = await sessionService.createSession({
+        userId: user._id,
+        userAgent: request.userAgent,
+      });
 
-    //return user and tokens
+      //sign access token and refresh token
+      const refreshToken = createRefresh(session);
+
+      const accessToken = createAccess(user, session);
+      //return user and tokens
+
+      res.status(OK).json({
+        user: user.omitPassword(),
+        accessToken,
+        refreshToken,
+      });
+    }
   }
 );
