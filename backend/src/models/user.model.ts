@@ -49,6 +49,15 @@ UserSchema.methods.comparePassword = async function (
   return await bcrypt.compare(enteredPass, this.password);
 };
 
+UserSchema.methods.omitPassword = function (): Pick<
+  User,
+  "_id" | "email" | "verified" | "createdAt" | "updatedAt"
+> {
+  const obj = this.toObject(); //built-in mongoose method, converts json to js object
+  delete obj.password;
+  return obj;
+};
+
 const UserModel = mongoose.model<User>("User", UserSchema);
 
 export default UserModel;

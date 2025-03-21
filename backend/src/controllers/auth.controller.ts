@@ -81,7 +81,7 @@ export const registerHandler = asyncHandler(
       //setAuthCookies returns the response
       return setAuthCookies({ res, accessToken, refreshToken })
         .status(CREATED)
-        .json(newUser);
+        .json(newUser.omitPassword());
     }
   }
 );

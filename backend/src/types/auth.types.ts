@@ -3,7 +3,6 @@ import { Query, Repository } from "./repository.types";
 import { Response } from "express";
 
 export interface User extends Document {
-  //   _id: mongoose.Types.ObjectId;
   email: string;
   password: string;
   verified: boolean;
@@ -11,6 +10,10 @@ export interface User extends Document {
   updatedAt: Date;
   userAgent?: string;
   comparePassword(val: string): Promise<boolean>;
+  omitPassword(): Pick<
+    User,
+    "_id" | "email" | "verified" | "createdAt" | "updatedAt"
+  >;
 }
 
 //Auth Cookies
