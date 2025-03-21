@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../lib/asyncHandler";
-import { registerSchema } from "../schemas/register.schema";
+import { registerSchema, loginSchema } from "../schemas/auth.schema";
 import { IAuthRepository, IAuthService } from "../types/auth.types";
 import { AuthRepository } from "../repositories/auth.repository";
 import { AuthService } from "../services/auth.service";
@@ -83,5 +83,11 @@ export const registerHandler = asyncHandler(
         .status(CREATED)
         .json(newUser.omitPassword());
     }
+  }
+);
+
+export const loginHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const request = loginSchema.parse(req.body);
   }
 );
