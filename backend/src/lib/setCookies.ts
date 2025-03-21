@@ -17,7 +17,7 @@ const accessTokenOptions = (): CookieOptions => ({
 const refreshTokenOptions = (): CookieOptions => ({
   ...cookieDefaultoptions,
   expires: thirtyDaysFromNow(),
-  path: "/auth/refresh", //send the refresh token only when using this path
+  path: "/auth/refresh", //send the refresh token to the cookie only when using this path
 });
 
 export const setAuthCookies = ({
