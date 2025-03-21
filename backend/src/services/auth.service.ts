@@ -12,4 +12,12 @@ export class AuthService implements IAuthService {
   async existUser(query: Query): Promise<{} | null> {
     return this.authRepository.exists(query);
   }
+
+  async findUserByEmail(email: string): Promise<User | null> {
+    return this.authRepository.findOne({ email });
+  }
+
+  async validateUserPassword(user: User, password: string): Promise<boolean> {
+    return user.comparePassword(password);
+  }
 }

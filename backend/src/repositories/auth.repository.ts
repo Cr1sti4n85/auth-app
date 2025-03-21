@@ -11,4 +11,8 @@ export class AuthRepository implements IAuthRepository {
   async exists(data: Query): Promise<{} | null> {
     return await UserModel.exists(data);
   }
+
+  async findOne(data: Query): Promise<User | null> {
+    return await UserModel.findOne(data);
+  }
 }

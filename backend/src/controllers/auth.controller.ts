@@ -15,7 +15,7 @@ import { oneYearFromNow } from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
-import { CONFLICT, CREATED } from "../config/statusCodes";
+import { CONFLICT, CREATED, UNAUTHORIZED } from "../config/statusCodes";
 import { createRefresh } from "../lib/refreshToken";
 import { createAccess } from "../lib/accessToken";
 import { setAuthCookies } from "../lib/setCookies";
@@ -88,6 +88,24 @@ export const registerHandler = asyncHandler(
 
 export const loginHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const request = loginSchema.parse(req.body);
+    const request = loginSchema.parse({
+      ...req.body,
+      userAgent: req.headers["user-agent"],
+    });
+
+    //get user by email
+    const user = await authService.findUserByEmail(request.email);
+    appAssert(user, UNAUTHORIZED, "Invalid email or password");
+    //validate password
+    const isValidPassword: boolean = await authService.validateUserPassword(
+      user,
+      request.password
+    );
+    appAssert(isValidPassword, UNAUTHORIZED, "Invalid email or password");
+    //create session
+
+    //sign access token and refresh token
+
+    //return user and tokens
   }
 );

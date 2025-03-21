@@ -23,9 +23,14 @@ export type AuthCookieParams = {
   refreshToken: string;
 };
 
-export interface IAuthRepository extends Repository<User> {}
+//Repositoried and services
+export interface IAuthRepository extends Repository<User> {
+  findOne(query: Query): Promise<User | null>;
+}
 
 export interface IAuthService {
   createUser(data: Partial<User>): Promise<User>;
   existUser(query: Query): Promise<{} | null>;
+  findUserByEmail(email: string): Promise<User | null>;
+  validateUserPassword(user: User, password: string): Promise<boolean>;
 }
