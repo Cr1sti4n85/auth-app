@@ -16,7 +16,7 @@ import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
 import { CONFLICT, CREATED, OK, UNAUTHORIZED } from "../config/statusCodes";
-import { setAuthCookies } from "../lib/setCookies";
+import { clearAuthCookies, setAuthCookies } from "../lib/setCookies";
 import appAssert from "../lib/appAssert";
 import { signToken, verifyToken } from "../lib/jwt";
 import { refreshTokenSignOptions } from "../lib/jwt";
@@ -152,7 +152,7 @@ export const logoutHandler = asyncHandler(
       await sessionService.findSessionAndDelete(payload.sessionId as string);
     }
 
-    return res.status(OK).json({
+    return clearAuthCookies(res).status(OK).json({
       message: "Logout successful",
     });
   }

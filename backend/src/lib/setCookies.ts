@@ -1,8 +1,9 @@
-import { CookieOptions } from "express";
+import { CookieOptions, Response } from "express";
 import { AuthCookieParams } from "../types/auth.types";
 import { NODE_ENV } from "../config/envConfig";
 import { fifteenMinutesFromNow, thirtyDaysFromNow } from "./date";
 
+export const REFRESH_PATH = "/auth/refresh";
 const cookieDefaultoptions: CookieOptions = {
   sameSite: "strict",
   httpOnly: true,
@@ -17,7 +18,7 @@ const accessTokenOptions = (): CookieOptions => ({
 const refreshTokenOptions = (): CookieOptions => ({
   ...cookieDefaultoptions,
   expires: thirtyDaysFromNow(),
-  path: "/auth/refresh", //send the refresh token to the cookie only when using this path
+  path: REFRESH_PATH, //send the refresh token to the cookie only when using this path
 });
 
 export const setAuthCookies = ({
@@ -28,3 +29,8 @@ export const setAuthCookies = ({
   res
     .cookie("accessToken", accessToken, accessTokenOptions())
     .cookie("refreshToken", refreshToken, refreshTokenOptions());
+
+export const clearAuthCookies = (res: Response) =>
+  res
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken", { path: REFRESH_PATH });
