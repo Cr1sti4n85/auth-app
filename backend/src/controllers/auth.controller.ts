@@ -16,11 +16,9 @@ import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
 import { CONFLICT, CREATED, OK, UNAUTHORIZED } from "../config/statusCodes";
-import { createRefresh } from "../lib/refreshToken";
-import { createAccess } from "../lib/accessToken";
 import { setAuthCookies } from "../lib/setCookies";
 import appAssert from "../lib/appAssert";
-import { signToken } from "../lib/jwt";
+import { signToken, verifyToken } from "../lib/jwt";
 import { refreshTokenSignOptions } from "../lib/jwt";
 
 const authRepository: IAuthRepository = new AuthRepository();
@@ -76,9 +74,17 @@ export const registerHandler = asyncHandler(
         userAgent: request.userAgent,
       });
 
-      const refreshToken = createRefresh(session);
+      const refreshToken = signToken(
+        {
+          sessionId: session._id as string,
+        },
+        refreshTokenSignOptions
+      );
 
-      const accessToken = createAccess(newUser, session);
+      const accessToken = signToken({
+        userId: newUser._id,
+        sessionId: session._id as string,
+      });
 
       //setAuthCookies returns the response
       return setAuthCookies({ res, accessToken, refreshToken })
@@ -131,6 +137,18 @@ export const loginHandler = asyncHandler(
         .json({
           message: "Login successful",
         });
+    }
+  }
+);
+
+export const logoutHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const accessToken = req.cookies["accessToken"];
+
+    const { payload } = verifyToken(accessToken);
+
+    if (payload) {
+      //remove session
     }
   }
 );
