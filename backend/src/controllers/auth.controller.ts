@@ -149,6 +149,11 @@ export const logoutHandler = asyncHandler(
 
     if (payload) {
       //remove session
+      await sessionService.findSessionAndDelete(payload.sessionId as string);
     }
+
+    return res.status(OK).json({
+      message: "Logout successful",
+    });
   }
 );
