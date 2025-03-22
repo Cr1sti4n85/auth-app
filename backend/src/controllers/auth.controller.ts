@@ -20,6 +20,8 @@ import { createRefresh } from "../lib/refreshToken";
 import { createAccess } from "../lib/accessToken";
 import { setAuthCookies } from "../lib/setCookies";
 import appAssert from "../lib/appAssert";
+import { signToken } from "../lib/jwt";
+import { refreshTokenSignOptions } from "../lib/jwt";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -111,16 +113,24 @@ export const loginHandler = asyncHandler(
       });
 
       //sign access token and refresh token
-      const refreshToken = createRefresh(session);
+      const refreshToken = signToken(
+        {
+          sessionId: session._id as string,
+        },
+        refreshTokenSignOptions
+      );
 
-      const accessToken = createAccess(user, session);
+      const accessToken = signToken({
+        userId: user._id,
+        sessionId: session._id as string,
+      });
       //return user and tokens
 
-      res.status(OK).json({
-        user: user.omitPassword(),
-        accessToken,
-        refreshToken,
-      });
+      return setAuthCookies({ res, accessToken, refreshToken })
+        .status(OK)
+        .json({
+          message: "Login successful",
+        });
     }
   }
 );
