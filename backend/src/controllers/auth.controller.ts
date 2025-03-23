@@ -143,9 +143,9 @@ export const loginHandler = asyncHandler(
 
 export const logoutHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    const accessToken = req.cookies["accessToken"];
+    const accessToken = req.cookies["accessToken"] as string | undefined;
 
-    const { payload } = verifyToken(accessToken);
+    const { payload } = verifyToken(accessToken || "");
 
     if (payload) {
       //remove session
@@ -155,5 +155,13 @@ export const logoutHandler = asyncHandler(
     return clearAuthCookies(res).status(OK).json({
       message: "Logout successful",
     });
+  }
+);
+
+export const refreshHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const refreshToken = req.cookies["refreshToken"] as string | undefined;
+
+    appAssert(refreshToken, UNAUTHORIZED, "Missin refresh token");
   }
 );

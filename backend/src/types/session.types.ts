@@ -11,10 +11,12 @@ export interface Session extends Document {
 
 export interface ISessionRepository extends Repository<Session> {
   findAndDelete(data: string): Promise<Session | null>;
+  findById(id: string): Promise<Session | null>;
 }
 
 export interface ISessionService {
   createSession(data: Partial<Session>): Promise<Session>;
   existSession(query: Query): Promise<{} | null>;
   findSessionAndDelete(data: string): Promise<Session | null>;
+  findSessionById(id: string): Promise<Session | null>;
 }

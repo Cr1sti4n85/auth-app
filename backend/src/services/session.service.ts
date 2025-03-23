@@ -20,4 +20,8 @@ export class SessionService implements ISessionService {
   async findSessionAndDelete(data: string): Promise<Session | null> {
     return this.sessionRepository.findAndDelete(data);
   }
+
+  async findSessionById(id: string): Promise<Session | null> {
+    return this.sessionRepository.findById(id);
+  }
 }
