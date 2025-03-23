@@ -11,14 +11,19 @@ import {
 } from "../types/verification.types";
 import { VerificationRepository } from "../repositories/verification.repository";
 import { VerificationService } from "../services/verification.service";
-import { oneYearFromNow } from "../lib/date";
+import { ONE_DAY_MS, oneYearFromNow, thirtyDaysFromNow } from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
 import { CONFLICT, CREATED, OK, UNAUTHORIZED } from "../config/statusCodes";
-import { clearAuthCookies, setAuthCookies } from "../lib/setCookies";
+import {
+  accessTokenOptions,
+  clearAuthCookies,
+  refreshTokenOptions,
+  setAuthCookies,
+} from "../lib/setCookies";
 import appAssert from "../lib/appAssert";
-import { signToken, verifyToken } from "../lib/jwt";
+import { RefreshTokenPayload, signToken, verifyToken } from "../lib/jwt";
 import { refreshTokenSignOptions } from "../lib/jwt";
 
 const authRepository: IAuthRepository = new AuthRepository();
@@ -163,5 +168,49 @@ export const refreshHandler = asyncHandler(
     const refreshToken = req.cookies["refreshToken"] as string | undefined;
 
     appAssert(refreshToken, UNAUTHORIZED, "Missin refresh token");
+
+    const { payload } = verifyToken<RefreshTokenPayload>(
+      refreshToken,
+      refreshTokenSignOptions
+    );
+
+    appAssert(payload, UNAUTHORIZED, "Invalid refresh token");
+
+    const session = await sessionService.findSessionById(
+      payload.sessionId as string
+    );
+    const now = Date.now();
+
+    appAssert(
+      session && session.expiresAt.getTime() > now,
+      UNAUTHORIZED,
+      "Session expired"
+    );
+
+    //refresh session if it expires in the next 24 hours
+    const sessionNeedsRefresh = session.expiresAt.getTime() - now <= ONE_DAY_MS;
+
+    if (sessionNeedsRefresh) {
+      session.expiresAt = thirtyDaysFromNow();
+      await session.save(); //TODO: implement update method in service
+    }
+
+    const newRefreshToken = sessionNeedsRefresh
+      ? signToken({ sessionId: session._id as string }, refreshTokenSignOptions)
+      : undefined;
+
+    const accessToken = signToken({
+      userId: session.userId,
+      sessionId: session._id as string,
+    });
+
+    if (newRefreshToken) {
+      res.cookie("refreshToken", newRefreshToken, refreshTokenOptions());
+    }
+
+    return res
+      .status(OK)
+      .cookie("accessToken", accessToken, accessTokenOptions())
+      .json({ message: "Access token refreshed" });
   }
 );

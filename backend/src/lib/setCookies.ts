@@ -10,12 +10,12 @@ const cookieDefaultoptions: CookieOptions = {
   secure: NODE_ENV !== "development",
 };
 
-const accessTokenOptions = (): CookieOptions => ({
+export const accessTokenOptions = (): CookieOptions => ({
   ...cookieDefaultoptions,
   expires: fifteenMinutesFromNow(),
 });
 
-const refreshTokenOptions = (): CookieOptions => ({
+export const refreshTokenOptions = (): CookieOptions => ({
   ...cookieDefaultoptions,
   expires: thirtyDaysFromNow(),
   path: REFRESH_PATH, //send the refresh token to the cookie only when using this path

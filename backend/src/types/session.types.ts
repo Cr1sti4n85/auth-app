@@ -1,6 +1,5 @@
 import { Document, Types } from "mongoose";
 import { Query, Repository } from "./repository.types";
-import { AccessTokenPayload } from "../lib/jwt";
 
 export interface Session extends Document {
   userId: Partial<Types.ObjectId>;
