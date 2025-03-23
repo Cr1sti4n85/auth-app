@@ -167,7 +167,7 @@ export const refreshHandler = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
     const refreshToken = req.cookies["refreshToken"] as string | undefined;
 
-    appAssert(refreshToken, UNAUTHORIZED, "Missin refresh token");
+    appAssert(refreshToken, UNAUTHORIZED, "Missing refresh token");
 
     const { payload } = verifyToken<RefreshTokenPayload>(
       refreshToken,
