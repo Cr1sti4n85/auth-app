@@ -15,4 +15,11 @@ export class AuthRepository implements IAuthRepository {
   async findOne(data: Query): Promise<User | null> {
     return await UserModel.findOne(data);
   }
+
+  async findByIdAndUpdate(
+    id: string,
+    data: Partial<User>
+  ): Promise<User | null> {
+    return await UserModel.findByIdAndUpdate(id, data, { new: true });
+  }
 }

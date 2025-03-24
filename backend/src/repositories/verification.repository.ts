@@ -13,4 +13,12 @@ export class VerificationRepository implements IVerificationRepository {
   async exists(query: Query): Promise<{} | null> {
     return await VerificationCodeModel.exists(query);
   }
+
+  async findOne(query: Query): Promise<Verification | null> {
+    return await VerificationCodeModel.findOne(query);
+  }
+
+  async deleteOne(query: Query): Promise<Verification | null> {
+    return await VerificationCodeModel.findOneAndDelete(query);
+  }
 }

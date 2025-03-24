@@ -13,9 +13,18 @@ export interface Verification extends Document {
   createdAt: Date;
 }
 
-export interface IVerificationRepository extends Repository<Verification> {}
+export interface IVerificationRepository extends Repository<Verification> {
+  findOne(query: Query): Promise<Verification | null>;
+  deleteOne(query: Query): Promise<Verification | null>;
+}
 
 export interface IVerificationService {
   createVerificationCode(data: Partial<Verification>): Promise<Verification>;
   existVerificationCode(query: Query): Promise<{} | null>;
+  findCodeByIdAndType(
+    id: string,
+    type: VerificationCodeType,
+    expiresAt: Date
+  ): Promise<Verification | null>;
+  deleteCodeById(id: string): Promise<Verification | null>;
 }

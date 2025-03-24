@@ -20,4 +20,11 @@ export class AuthService implements IAuthService {
   async validateUserPassword(user: User, password: string): Promise<boolean> {
     return user.comparePassword(password);
   }
+
+  async findUserAndUpdate(
+    id: string,
+    data: Partial<User>
+  ): Promise<User | null> {
+    return this.authRepository.findByIdAndUpdate(id, data);
+  }
 }

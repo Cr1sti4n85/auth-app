@@ -1,6 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import asyncHandler from "../lib/asyncHandler";
-import { registerSchema, loginSchema } from "../schemas/auth.schema";
+import {
+  registerSchema,
+  loginSchema,
+  verificationCodeSchema,
+} from "../schemas/auth.schema";
 import { IAuthRepository, IAuthService } from "../types/auth.types";
 import { AuthRepository } from "../repositories/auth.repository";
 import { AuthService } from "../services/auth.service";
@@ -15,7 +19,14 @@ import { ONE_DAY_MS, oneYearFromNow, thirtyDaysFromNow } from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
-import { CONFLICT, CREATED, OK, UNAUTHORIZED } from "../config/statusCodes";
+import {
+  CONFLICT,
+  CREATED,
+  INTERNAL_SERVER_ERROR,
+  NOT_FOUND,
+  OK,
+  UNAUTHORIZED,
+} from "../config/statusCodes";
 import {
   accessTokenOptions,
   clearAuthCookies,
@@ -212,5 +223,36 @@ export const refreshHandler = asyncHandler(
       .status(OK)
       .cookie("accessToken", accessToken, accessTokenOptions())
       .json({ message: "Access token refreshed" });
+  }
+);
+
+export const verifyEmailHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const verificationCode = verificationCodeSchema.parse(req.params.code);
+
+    //get the verification code
+    const validCode = await verificationService.findCodeByIdAndType(
+      verificationCode,
+      VerificationCodeType.EmailVerification,
+      new Date()
+    );
+
+    appAssert(validCode, NOT_FOUND, "Invalid or expired verification code");
+
+    //update user as verified
+    const updatedUser = await authService.findUserAndUpdate(
+      validCode.userId as string,
+      {
+        verified: true,
+      }
+    );
+
+    appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to verify user");
+
+    //delete verification code
+    await verificationService.deleteCodeById(validCode._id as string);
+
+    //return updated user
+    return res.status(OK).json({ message: "Email was successfully verified." });
   }
 );

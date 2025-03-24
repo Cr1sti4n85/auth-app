@@ -26,6 +26,7 @@ export type AuthCookieParams = {
 //Repositoried and services
 export interface IAuthRepository extends Repository<User> {
   findOne(query: Query): Promise<User | null>;
+  findByIdAndUpdate(id: string, data: Partial<User>): Promise<User | null>;
 }
 
 export interface IAuthService {
@@ -33,4 +34,5 @@ export interface IAuthService {
   existUser(query: Query): Promise<{} | null>;
   findUserByEmail(email: string): Promise<User | null>;
   validateUserPassword(user: User, password: string): Promise<boolean>;
+  findUserAndUpdate(id: string, data: Partial<User>): Promise<User | null>;
 }
