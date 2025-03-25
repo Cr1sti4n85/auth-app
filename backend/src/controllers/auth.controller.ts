@@ -47,6 +47,7 @@ import { refreshTokenSignOptions } from "../lib/jwt";
 import { APP_ORIGIN } from "../config/envConfig";
 import { sendEmail } from "../lib/sendEmail";
 import { getVerifyEmailTemplate } from "../lib/templates/verifyEmail";
+import { getPasswordResetTemplate } from "../lib/templates/passwordReset";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -309,6 +310,20 @@ export const sendPasswordResetHandler = asyncHandler(
       verificationCode._id
     }&exp=${expiresAt.getTime()}`;
 
+    const { data, error } = await sendEmail({
+      to: user.email,
+      ...getPasswordResetTemplate(url),
+    });
+
+    appAssert(
+      data?.id,
+      INTERNAL_SERVER_ERROR,
+      `Failed to send email: ${error?.name} - ${error?.message}`
+    );
+
     //return
+    return res.status(OK).json({
+      message: "Password reset email sent",
+    });
   }
 );
