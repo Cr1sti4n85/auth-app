@@ -36,6 +36,9 @@ import {
 import appAssert from "../lib/appAssert";
 import { RefreshTokenPayload, signToken, verifyToken } from "../lib/jwt";
 import { refreshTokenSignOptions } from "../lib/jwt";
+import { APP_ORIGIN } from "../config/envConfig";
+import { sendEmail } from "../lib/sendEmail";
+import { getVerifyEmailTemplate } from "../lib/templates/verifyEmail";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -83,6 +86,13 @@ export const registerHandler = asyncHandler(
         }
       );
       //TODO: send verification email
+      const url = `${APP_ORIGIN}/email/verify/${verificationCode._id}`;
+      const { error } = await sendEmail({
+        to: newUser.email,
+        ...getVerifyEmailTemplate(url),
+      });
+
+      if (error) console.log(error);
 
       //create session
       const session = await sessionService.createSession({
