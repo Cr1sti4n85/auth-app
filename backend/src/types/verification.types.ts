@@ -16,6 +16,7 @@ export interface Verification extends Document {
 export interface IVerificationRepository extends Repository<Verification> {
   findOne(query: Query): Promise<Verification | null>;
   deleteOne(query: Query): Promise<Verification | null>;
+  countDocuments(query: Query): Promise<number>;
 }
 
 export interface IVerificationService {
@@ -27,4 +28,5 @@ export interface IVerificationService {
     expiresAt: Date
   ): Promise<Verification | null>;
   deleteCodeById(id: string): Promise<Verification | null>;
+  countVerificationCodes(query: Query): Promise<number>;
 }

@@ -21,4 +21,8 @@ export class VerificationRepository implements IVerificationRepository {
   async deleteOne(query: Query): Promise<Verification | null> {
     return await VerificationCodeModel.findOneAndDelete(query);
   }
+
+  async countDocuments(query: Query): Promise<number> {
+    return await VerificationCodeModel.countDocuments(query);
+  }
 }

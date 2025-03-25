@@ -4,6 +4,7 @@ import {
   registerSchema,
   loginSchema,
   verificationCodeSchema,
+  emailSchema,
 } from "../schemas/auth.schema";
 import { IAuthRepository, IAuthService } from "../types/auth.types";
 import { AuthRepository } from "../repositories/auth.repository";
@@ -15,7 +16,13 @@ import {
 } from "../types/verification.types";
 import { VerificationRepository } from "../repositories/verification.repository";
 import { VerificationService } from "../services/verification.service";
-import { ONE_DAY_MS, oneYearFromNow, thirtyDaysFromNow } from "../lib/date";
+import {
+  fiveMinutesAgo,
+  ONE_DAY_MS,
+  onehourFromNow,
+  oneYearFromNow,
+  thirtyDaysFromNow,
+} from "../lib/date";
 import { ISessionRepository, ISessionService } from "../types/session.types";
 import { SessionRepository } from "../repositories/session.repository";
 import { SessionService } from "../services/session.service";
@@ -25,6 +32,7 @@ import {
   INTERNAL_SERVER_ERROR,
   NOT_FOUND,
   OK,
+  TOO_MANY_REQUESTS,
   UNAUTHORIZED,
 } from "../config/statusCodes";
 import {
@@ -264,5 +272,43 @@ export const verifyEmailHandler = asyncHandler(
 
     //return updated user
     return res.status(OK).json({ message: "Email was successfully verified." });
+  }
+);
+
+export const sendPasswordResetHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const email = emailSchema.parse(req.body.email);
+
+    //get user by email
+    const user = await authService.findUserByEmail(email);
+    appAssert(user, NOT_FOUND, "User not found");
+
+    //check email rate limit
+    const fiveMinAgo = fiveMinutesAgo();
+    const count = await verificationService.countVerificationCodes({
+      userId: user._id,
+      type: VerificationCodeType.PasswordReset,
+      createdAt: { $gte: fiveMinAgo },
+    });
+
+    appAssert(
+      count <= 1,
+      TOO_MANY_REQUESTS,
+      "Too many requests, try again in a few minutes"
+    );
+    //create verification code
+    const expiresAt = onehourFromNow();
+    const verificationCode = await verificationService.createVerificationCode({
+      userId: user._id as string,
+      type: VerificationCodeType.PasswordReset,
+      expiresAt,
+    });
+
+    //send verification email
+    const url = `${APP_ORIGIN}/password/reset?code=${
+      verificationCode._id
+    }&exp=${expiresAt.getTime()}`;
+
+    //return
   }
 );

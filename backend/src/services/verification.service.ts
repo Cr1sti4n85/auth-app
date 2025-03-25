@@ -34,4 +34,8 @@ export class VerificationService implements IVerificationService {
   async deleteCodeById(id: string): Promise<Verification | null> {
     return this.verificationRepository.deleteOne({ _id: id });
   }
+
+  async countVerificationCodes(query: Query): Promise<number> {
+    return this.verificationRepository.countDocuments(query);
+  }
 }

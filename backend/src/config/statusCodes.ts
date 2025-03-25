@@ -6,6 +6,7 @@ export const FORBIDDEN = 403;
 export const NOT_FOUND = 404;
 export const INTERNAL_SERVER_ERROR = 500;
 export const CONFLICT = 409;
+export const TOO_MANY_REQUESTS = 429;
 
 export type HttpStatusCodes =
   | typeof OK
@@ -15,4 +16,5 @@ export type HttpStatusCodes =
   | typeof FORBIDDEN
   | typeof NOT_FOUND
   | typeof INTERNAL_SERVER_ERROR
-  | typeof CONFLICT;
+  | typeof CONFLICT
+  | typeof TOO_MANY_REQUESTS;
