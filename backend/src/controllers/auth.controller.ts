@@ -5,6 +5,7 @@ import {
   loginSchema,
   verificationCodeSchema,
   emailSchema,
+  resetPasswordSchema,
 } from "../schemas/auth.schema";
 import { IAuthRepository, IAuthService } from "../types/auth.types";
 import { AuthRepository } from "../repositories/auth.repository";
@@ -48,6 +49,7 @@ import { APP_ORIGIN } from "../config/envConfig";
 import { sendEmail } from "../lib/sendEmail";
 import { getVerifyEmailTemplate } from "../lib/templates/verifyEmail";
 import { getPasswordResetTemplate } from "../lib/templates/passwordReset";
+import { hashValue } from "../lib/bcrypt";
 
 const authRepository: IAuthRepository = new AuthRepository();
 const authService: IAuthService = new AuthService(authRepository);
@@ -324,6 +326,42 @@ export const sendPasswordResetHandler = asyncHandler(
     //return
     return res.status(OK).json({
       message: "Password reset email sent",
+    });
+  }
+);
+
+export const resetPasswordHandler = asyncHandler(
+  async (req: Request, res: Response, next: NextFunction) => {
+    const request = resetPasswordSchema.parse(req.body);
+
+    //get verification code
+    const validCode = await verificationService.findCodeByIdAndType(
+      request.verificationCode,
+      VerificationCodeType.PasswordReset,
+      new Date()
+    );
+
+    appAssert(validCode, NOT_FOUND, "Invalid or expired verification code");
+
+    //update user password
+    const updatedUser = await authService.findUserAndUpdate(
+      validCode.userId as string,
+      {
+        password: await hashValue(request.password),
+      }
+    );
+
+    appAssert(updatedUser, INTERNAL_SERVER_ERROR, "Failed to reset password");
+
+    //delete verification code
+    await verificationService.deleteCodeById(validCode._id as string);
+
+    //delete all sessions
+    await sessionService.deleteAllSessions({ userId: updatedUser._id });
+
+    //user will be required to log in again
+    return clearAuthCookies(res).status(OK).json({
+      message: "Password reset successful",
     });
   }
 );

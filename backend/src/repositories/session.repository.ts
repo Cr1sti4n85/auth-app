@@ -20,4 +20,10 @@ export class SessionRepository implements ISessionRepository {
   async findById(id: string): Promise<Session | null> {
     return await SessionModel.findById(id);
   }
+
+  async deleteAll(
+    query: Query
+  ): Promise<{ deletedCount?: number; acknowledged?: boolean }> {
+    return await SessionModel.deleteMany(query);
+  }
 }

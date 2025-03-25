@@ -11,6 +11,7 @@ export interface Session extends Document {
 export interface ISessionRepository extends Repository<Session> {
   findAndDelete(data: string): Promise<Session | null>;
   findById(id: string): Promise<Session | null>;
+  deleteAll(query: Query): Promise<{}>;
 }
 
 export interface ISessionService {
@@ -18,4 +19,5 @@ export interface ISessionService {
   existSession(query: Query): Promise<{} | null>;
   findSessionAndDelete(data: string): Promise<Session | null>;
   findSessionById(id: string): Promise<Session | null>;
+  deleteAllSessions(query: Query): Promise<{}>;
 }
