@@ -13,8 +13,8 @@ export class AuthService implements IAuthService {
     return this.authRepository.exists(query);
   }
 
-  async findUserByEmail(email: string): Promise<User | null> {
-    return this.authRepository.findOne({ email });
+  async findUserBy(query: Query): Promise<User | null> {
+    return this.authRepository.findOne(query);
   }
 
   async validateUserPassword(user: User, password: string): Promise<boolean> {

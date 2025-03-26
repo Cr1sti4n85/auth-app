@@ -96,7 +96,7 @@ export const registerHandler = asyncHandler(
           expiresAt: oneYearFromNow(),
         }
       );
-      //TODO: send verification email
+
       const url = `${APP_ORIGIN}/email/verify/${verificationCode._id}`;
       const { error } = await sendEmail({
         to: newUser.email,
@@ -139,7 +139,7 @@ export const loginHandler = asyncHandler(
     });
 
     //get user by email
-    const user = await authService.findUserByEmail(request.email);
+    const user = await authService.findUserBy({ email: request.email });
     appAssert(user, UNAUTHORIZED, "Invalid email or password");
     //validate password
     const isValidPassword: boolean = await authService.validateUserPassword(
@@ -283,7 +283,7 @@ export const sendPasswordResetHandler = asyncHandler(
     const email = emailSchema.parse(req.body.email);
 
     //get user by email
-    const user = await authService.findUserByEmail(email);
+    const user = await authService.findUserBy({ email });
     appAssert(user, NOT_FOUND, "User not found");
 
     //check email rate limit

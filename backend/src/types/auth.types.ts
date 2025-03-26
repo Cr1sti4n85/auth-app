@@ -32,7 +32,7 @@ export interface IAuthRepository extends Repository<User> {
 export interface IAuthService {
   createUser(data: Partial<User>): Promise<User>;
   existUser(query: Query): Promise<{} | null>;
-  findUserByEmail(email: string): Promise<User | null>;
+  findUserBy(query: Query): Promise<User | null>;
   validateUserPassword(user: User, password: string): Promise<boolean>;
   findUserAndUpdate(id: string, data: Partial<User>): Promise<User | null>;
 }
