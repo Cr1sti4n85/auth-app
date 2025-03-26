@@ -24,6 +24,13 @@ export class SessionService implements ISessionService {
   async findSessionById(id: string): Promise<Session | null> {
     return this.sessionRepository.findById(id);
   }
+
+  async findAllSessions(id: string, date: Date): Promise<Session[]> {
+    return this.sessionRepository.findAll({
+      userId: id,
+      expiresAt: { $gt: date },
+    });
+  }
   async deleteAllSessions(query: Query): Promise<{}> {
     return this.sessionRepository.deleteAll(query);
   }

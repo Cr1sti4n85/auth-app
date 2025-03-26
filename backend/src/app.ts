@@ -8,6 +8,7 @@ import errorHandler from "./middleware/errorHandler";
 import authRouter from "./routes/auth.route";
 import authenticate from "./middleware/authenticate";
 import userRouter from "./routes/user.route";
+import sessionRouter from "./routes/session.route";
 
 const app: Application = express();
 
@@ -25,6 +26,7 @@ app.use(cookieParser());
 app.use("/auth", authRouter);
 
 app.use("/user", authenticate, userRouter);
+app.use("/sessions", authenticate, sessionRouter);
 
 app.use(errorHandler);
 
