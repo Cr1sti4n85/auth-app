@@ -1,8 +1,12 @@
 import { Router } from "express";
-import { getSessionHandler } from "../controllers/session.controller";
+import {
+  deleteSessionHandler,
+  getSessionHandler,
+} from "../controllers/session.controller";
 
 const sessionRouter = Router();
 
 sessionRouter.get("/", getSessionHandler);
+sessionRouter.delete("/:id", deleteSessionHandler);
 
 export default sessionRouter;

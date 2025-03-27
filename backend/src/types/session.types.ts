@@ -9,7 +9,10 @@ export interface Session extends Document {
 }
 
 export interface ISessionRepository extends Repository<Session> {
-  findAndDelete(data: string): Promise<Session | null>;
+  findAndDelete(
+    sessionData: string,
+    userData?: string
+  ): Promise<Session | null>;
   findById(id: string): Promise<Session | null>;
   deleteAll(query: Query): Promise<{}>;
   findAll(query: Query): Promise<Session[]>;
@@ -18,7 +21,10 @@ export interface ISessionRepository extends Repository<Session> {
 export interface ISessionService {
   createSession(data: Partial<Session>): Promise<Session>;
   existSession(query: Query): Promise<{} | null>;
-  findSessionAndDelete(data: string): Promise<Session | null>;
+  findSessionAndDelete(
+    sessionId: string,
+    userId?: string
+  ): Promise<Session | null>;
   findSessionById(id: string): Promise<Session | null>;
   findAllSessions(id: string, date: Date): Promise<Session[]>;
   deleteAllSessions(query: Query): Promise<{}>;
