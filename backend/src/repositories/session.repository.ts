@@ -35,9 +35,8 @@ export class SessionRepository implements ISessionRepository {
         _id: data,
         userId: userData,
       });
-    } else {
-      return await SessionModel.findOneAndDelete({ _id: data });
     }
+    return await SessionModel.findOneAndDelete({ _id: data });
   }
 
   async findById(id: string): Promise<Session | null> {
