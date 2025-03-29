@@ -10,12 +10,15 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
+// import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
 import { Link } from "react-router";
 
 const Login = () => {
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+
+  // const {} = useMutation({});
 
   return (
     <>
@@ -26,7 +29,7 @@ const Login = () => {
           </Heading>
           <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
             <Stack wordSpacing={4}>
-              <Field.Root id="email">
+              <Field.Root id="email" color="white">
                 <Field.Label>Email Address</Field.Label>
                 <Input
                   type="email"
@@ -34,7 +37,7 @@ const Login = () => {
                   onChange={(e) => setEmail(e.target.value)}
                 />
               </Field.Root>
-              <Field.Root id="password">
+              <Field.Root id="password" color="white">
                 <Field.Label>Password</Field.Label>
                 <Input
                   type="password"
@@ -42,7 +45,7 @@ const Login = () => {
                   onChange={(e) => setPassword(e.target.value)}
                 />
               </Field.Root>
-              <ChakraLink asChild fontSize="sm">
+              <ChakraLink asChild fontSize="sm" color="whiteAlpha.500">
                 <Link to="/password/forgot">Forgot Password</Link>
               </ChakraLink>
               <Button
