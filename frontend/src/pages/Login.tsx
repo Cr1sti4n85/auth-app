@@ -1,3 +1,4 @@
+import { login } from "../lib/api";
 import {
   Box,
   Container,
@@ -10,15 +11,25 @@ import {
   Button,
   Text,
 } from "@chakra-ui/react";
-// import { useMutation } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 
 const Login = () => {
+  const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
 
-  // const {} = useMutation({});
+  const {
+    mutate: signIn,
+    isPending,
+    isError,
+  } = useMutation({
+    mutationFn: login,
+    onSuccess: () => {
+      navigate("/", { replace: true });
+    },
+  });
 
   return (
     <>
@@ -28,6 +39,11 @@ const Login = () => {
             Sign into your Account
           </Heading>
           <Box rounded="lg" bg="gray.700" boxShadow="lg" p={8}>
+            {isError && (
+              <Box mb={3} color="red.500">
+                Invalid credentials
+              </Box>
+            )}
             <Stack wordSpacing={4}>
               <Field.Root id="email" color="white">
                 <Field.Label>Email Address</Field.Label>
@@ -43,15 +59,20 @@ const Login = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && signIn({ email, password })
+                  }
                 />
               </Field.Root>
               <ChakraLink asChild fontSize="sm" color="whiteAlpha.500">
                 <Link to="/password/forgot">Forgot Password</Link>
               </ChakraLink>
               <Button
+                loading={isPending}
                 my={2}
                 disabled={!email || password.length < 8}
                 type="submit"
+                onClick={() => signIn({ email, password })}
               >
                 Sign In
               </Button>
