@@ -19,3 +19,7 @@ export const register = async (data: RegisterData): Promise<AxiosResponse> =>
 export const verifyEmail = async (
   verificationCode: string
 ): Promise<AxiosResponse> => API.get(`/auth/email/verify/${verificationCode}`);
+
+export const sendPasswordResetEmail = async (
+  email: string
+): Promise<AxiosResponse> => API.post("/auth/password/forgot", { email });
