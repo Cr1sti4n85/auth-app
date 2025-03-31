@@ -15,3 +15,7 @@ export const login = async (data: LoginData): Promise<AxiosResponse> =>
 
 export const register = async (data: RegisterData): Promise<AxiosResponse> =>
   API.post("/auth/register", data);
+
+export const verifyEmail = async (
+  verificationCode: string
+): Promise<AxiosResponse> => API.get(`/auth/email/verify/${verificationCode}`);
