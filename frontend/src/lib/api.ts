@@ -10,6 +10,11 @@ interface RegisterData extends LoginData {
   confirmPassword: string;
 }
 
+type ResetPassWordData = {
+  verificationCode: string;
+  password: string;
+};
+
 export const login = async (data: LoginData): Promise<AxiosResponse> =>
   API.post("/auth/login", data);
 
@@ -23,3 +28,9 @@ export const verifyEmail = async (
 export const sendPasswordResetEmail = async (
   email: string
 ): Promise<AxiosResponse> => API.post("/auth/password/forgot", { email });
+
+export const resetPassword = async ({
+  verificationCode,
+  password,
+}: ResetPassWordData): Promise<AxiosResponse> =>
+  API.post("/auth/password/reset", { verificationCode, password });
