@@ -34,3 +34,5 @@ export const resetPassword = async ({
   password,
 }: ResetPassWordData): Promise<AxiosResponse> =>
   API.post("/auth/password/reset", { verificationCode, password });
+
+export const getUser = async (): Promise<AxiosResponse> => API.get("/user");

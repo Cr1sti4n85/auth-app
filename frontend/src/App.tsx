@@ -4,11 +4,14 @@ import Register from "./pages/Register";
 import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import AppContainer from "./components/AppContainer";
 
 function App() {
   return (
     <Routes>
-      <Route path="/" element={<h1>Holanda que talca</h1>} />
+      <Route path="/" element={<AppContainer />}>
+        <Route path="/" element={<h1>This is Home</h1>} />
+      </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/email/verify/:code" element={<VerifyEmail />} />
