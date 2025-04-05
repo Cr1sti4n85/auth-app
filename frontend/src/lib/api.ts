@@ -18,6 +18,9 @@ type ResetPassWordData = {
 export const login = async (data: LoginData): Promise<AxiosResponse> =>
   API.post("/auth/login", data);
 
+export const logout = async (): Promise<AxiosResponse> =>
+  API.get("/auth/logout");
+
 export const register = async (data: RegisterData): Promise<AxiosResponse> =>
   API.post("/auth/register", data);
 
