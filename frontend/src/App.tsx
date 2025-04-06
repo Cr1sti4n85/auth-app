@@ -5,12 +5,13 @@ import VerifyEmail from "./pages/VerifyEmail";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import AppContainer from "./components/AppContainer";
+import Profile from "./pages/Profile";
 
 function App() {
   return (
     <Routes>
       <Route path="/" element={<AppContainer />}>
-        <Route path="/" element={<h1>This is Home</h1>} />
+        <Route path="/profile" element={<Profile />} />
       </Route>
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
