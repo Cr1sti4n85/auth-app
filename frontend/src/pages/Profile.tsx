@@ -1,5 +1,5 @@
 import useAuth from "../hooks/useAuth";
-import { User } from "../user.type";
+import { User } from "../types";
 import {
   Alert,
   AlertContent,
