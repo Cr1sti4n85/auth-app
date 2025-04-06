@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import API from "../config/apiClient";
-import { Session } from "../types";
+// import { Session } from "../types";
 
 interface LoginData {
   email: string;
@@ -41,7 +41,9 @@ export const resetPassword = async ({
 
 export const getUser = async (): Promise<AxiosResponse> => API.get("/user");
 
-export const getSessions = async (): Promise<Session[]> => {
-  const response = await API.get("/sessions");
-  return response.data;
-};
+export const getSessions = async (): Promise<AxiosResponse> =>
+  API.get("/sessions");
+
+export const deleteSession = async (
+  sessionId: string
+): Promise<AxiosResponse> => API.delete(`/sessions/${sessionId}`);
