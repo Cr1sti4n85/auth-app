@@ -12,6 +12,10 @@ const options: CreateAxiosDefaults = {
   withCredentials: true,
 };
 
+//creation of new axios instance in order to avoid loops
+const TokenRefreshClient: AxiosInstance = axios.create(options);
+TokenRefreshClient.interceptors.response.use((response) => response.data);
+
 const API: AxiosInstance = axios.create(options);
 
 API.interceptors.response.use(
@@ -23,9 +27,9 @@ API.interceptors.response.use(
     //try to refresh access token
     if (status === 401 && data?.errorCode === "InvalidAccessToken") {
       try {
-        await API.get("/auth/refresh");
+        await TokenRefreshClient.get("/auth/refresh");
         if (config) {
-          return API(config);
+          return TokenRefreshClient(config);
         }
       } catch (err) {
         console.log(err);
