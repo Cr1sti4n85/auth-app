@@ -13,12 +13,16 @@ import {
 } from "@chakra-ui/react";
 import { useMutation } from "@tanstack/react-query";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 
 const Login = () => {
+  const location = useLocation();
   const navigate = useNavigate();
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
+  //if the user gets signed out from the app, we redirect him to the page he was trying to access
+  //before signing out. the state comes from the axios interceptor
+  const redirectUrl = location.state?.redirectUrl || "/";
 
   const {
     mutate: signIn,
@@ -27,7 +31,7 @@ const Login = () => {
   } = useMutation({
     mutationFn: login,
     onSuccess: () => {
-      navigate("/", { replace: true });
+      navigate(redirectUrl, { replace: true });
     },
   });
 
